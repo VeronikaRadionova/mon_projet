@@ -44,7 +44,7 @@ filtered_df = df[df["event_type"].isin(selected_types)]
 
 
 # filtrage et agrégation
-filtered_df = df[df["event_type"] == event_type]
+#filtered_df = df[df["event_type"] == event_type]
 tweet_counts = filtered_df.groupby("year").size()
 
 # affichage du graphique
@@ -53,7 +53,7 @@ tweet_counts.plot(kind="bar", stacked=True, ax=ax)
 
 ax.set_xlabel("Année")
 ax.set_ylabel("Nombre de tweets")
-ax.set_title(f"Évolution des tweets pour : {event_type}")
+ax.set_title(f"Évolution des tweets pour : ")
 
 ax.set_xticks(range(len(tweet_counts)))
 ax.set_xticklabels(tweet_counts.index, rotation=45)
