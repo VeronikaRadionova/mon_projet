@@ -34,6 +34,12 @@ def load_data():
 
 df = load_data()
 
+
+
+
+
+
+
 # liste des types d’événements disponibles
 event_types = df["event_type"].dropna().unique()
 event_type = st.selectbox("Choisissez un type d'événement :", sorted(event_types))
@@ -47,7 +53,6 @@ event_type = st.selectbox("Choisissez un type d'événement :", sorted(event_typ
 # filtrage et agrégation
 filtered_df = df[df["event_type"] == event_type]
 tweet_counts = filtered_df.groupby("year").size()
-
 
 
 # affichage du graphique
@@ -68,9 +73,18 @@ plt.tight_layout()
 st.pyplot(fig)
 
 
-#plotly
+
+
+
+# plotly
+
+# filtrage et agrégation
+tweet_counts_df = filtered_df.groupby("year").size().reset_index(name="tweet_count")
+tweet_counts_df["event_type"] = event_type  # ajoute la colonne event_type pour l'affichage
+
+
 fig = px.bar(
-    filtered_df,
+    tweet_counts_df,
     x="year",
     y="tweet_count",
     color="event_type",
