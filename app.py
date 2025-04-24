@@ -1,7 +1,59 @@
 import streamlit as st
+import pandas as pd
+import matplotlib.pyplot as plt
 
-# Affichage d'un titre
-st.title("Mon application Streamlit")
+st.title("Évolution des tweets par type d'événement")
 
-# Affichage d'un texte
-st.write("Bienvenue sur mon app Streamlit !")
+# chargement des fichiers CSV
+@st.cache_data
+
+def load_data():
+    is_about_df = pd.read_csv("is_about_clean.csv")
+    event_df = pd.read_csv("Event_clean.csv")
+    tweet_df = pd.read_csv("Tweet_clean.csv")
+
+    # nettoyage des types
+    is_about_df["event_id"] = pd.to_numeric(is_about_df["event_id"], errors="coerce")
+    event_df["node_id"] = pd.to_numeric(event_df["node_id"], errors="coerce")
+    is_about_df["tweet_id"] = pd.to_numeric(is_about_df["tweet_id"], errors="coerce")
+    tweet_df["tweet_id"] = pd.to_numeric(tweet_df["tweet_id"], errors="coerce")
+
+    # renommage pour fusion
+    event_df = event_df.rename(columns={"event_id": "real_event_id", "node_id": "event_id"})
+
+    # fusions
+    merged_df = is_about_df.merge(event_df, on="event_id", how="left")
+    merged_df = merged_df.merge(tweet_df, on="tweet_id", how="left")
+
+    # conversion de date
+    merged_df["created_at"] = pd.to_datetime(merged_df["created_at"], errors="coerce")
+    merged_df["year"] = merged_df["created_at"].dt.year
+
+    return merged_df
+
+df = load_data()
+
+# liste des types d’événements disponibles
+event_types = df["event_type"].dropna().unique()
+event_type = st.selectbox("Choisissez un type d'événement :", sorted(event_types))
+
+# filtrage et agrégation
+filtered_df = df[df["event_type"] == event_type]
+tweet_counts = filtered_df.groupby("year").size()
+
+# affichage du graphique
+fig, ax = plt.subplots(figsize=(10, 5))
+tweet_counts.plot(kind="bar", stacked=True, ax=ax)
+
+ax.set_xlabel("Année")
+ax.set_ylabel("Nombre de tweets")
+ax.set_title(f"Évolution des tweets pour : {event_type}")
+
+ax.set_xticks(range(len(tweet_counts)))
+ax.set_xticklabels(tweet_counts.index, rotation=45)
+ax.grid(axis="y", linestyle="--", alpha=0.7)
+
+plt.tight_layout()
+
+# affichage dans Streamlit
+st.pyplot(fig)
