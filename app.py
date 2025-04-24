@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+import plotly.express as px
 
 st.title("Évolution des tweets par type d'événement")
 
@@ -65,3 +66,22 @@ plt.tight_layout()
 
 # affichage dans Streamlit
 st.pyplot(fig)
+
+
+
+
+#plotly
+fig = px.bar(
+    tweet_counts,
+    x="year",
+    y="tweet_count",
+    color="event_type",
+    barmode="group",
+    labels={"year": "Année", "tweet_count": "Nombre de tweets", "event_type": "Type d'événement"},
+    title="Nombre de tweets par année et type d'événement",
+    template="plotly_white"
+)
+
+fig.update_layout(xaxis_tickangle=-45)
+
+st.plotly_chart(fig, use_container_width=True)
