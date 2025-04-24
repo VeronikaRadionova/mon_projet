@@ -102,6 +102,7 @@ st.plotly_chart(fig, use_container_width=True)
 
 
 
+
 # Calcul du nombre de tweets par type d'événement et par année
 tweet_counts = df.groupby(["event_type", "year"]).size().unstack(fill_value=0)
 
@@ -128,6 +129,48 @@ fig.update_layout(
     legend_title="Type d'événement",
     legend=dict(x=1.05, y=1),  # Déplace la légende en dehors du graphique
     margin=dict(r=50, t=50, b=50, l=50)  # Ajoute de l'espace pour la légende
+)
+
+# Affichage du graphique dans Streamlit
+st.plotly_chart(fig, use_container_width=True)
+
+
+
+
+
+
+
+# Calcul du nombre de tweets par type d'événement et par année
+tweet_counts = df.groupby(["event_type", "year"]).size().reset_index(name='tweet_count')
+
+# Création d'un tableau pivot
+pivot_df = tweet_counts.pivot_table(index='year', columns='event_type', values='tweet_count', aggfunc='sum', fill_value=0)
+
+# Création de la figure avec Plotly
+fig = go.Figure()
+
+# Ajouter une ligne pour chaque type d'événement
+for event_type in pivot_df.columns:
+    fig.add_trace(go.Scatter(
+        x=pivot_df.index,
+        y=pivot_df[event_type],
+        mode='lines+markers',  # 'lines+markers' pour lignes et points
+        name=event_type,
+        hovertemplate="Année : %{x}<br>Nombre de tweets : %{y}<extra></extra>"
+    ))
+
+# Mise à jour de la mise en page pour un affichage interactif
+fig.update_layout(
+    title="Évolution des tweets par type d'événement",
+    xaxis_title="Année",
+    yaxis_title="Nombre de tweets",
+    xaxis_tickangle=-45,
+    template="plotly_white",  # Thème plus épuré
+    hovermode="x unified",  # Afficher les infos pour toutes les lignes de la même année
+    legend_title="Type d'événement",
+    legend=dict(x=1.05, y=1),  # Déplace la légende en dehors du graphique
+    margin=dict(r=50, t=50, b=50, l=50),  # Ajoute de l'espace pour la légende
+    showlegend=True
 )
 
 # Affichage du graphique dans Streamlit
