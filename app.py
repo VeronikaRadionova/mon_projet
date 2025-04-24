@@ -34,18 +34,25 @@ def load_data():
 df = load_data()
 
 # liste des types d’événements disponibles
-#event_types = df["event_type"].dropna().unique()
-#event_type = st.selectbox("Choisissez un type d'événement :", sorted(event_types))
+event_types = df["event_type"].dropna().unique()
+event_type = st.selectbox("Choisissez un type d'événement :", sorted(event_types))
 
 # choix multiple
-event_types = df["event_type"].dropna().unique()
-selected_types = st.multiselect("Sélectionnez un ou plusieurs types d'événements :", sorted(event_types), default=["earthquake"])
-filtered_df = df[df["event_type"].isin(selected_types)]
+#event_types = df["event_type"].dropna().unique()
+#selected_types = st.multiselect("Sélectionnez un ou plusieurs types d'événements :", sorted(event_types), default=["earthquake"])
+#filtered_df = df[df["event_type"].isin(selected_types)]
 
 
 # filtrage et agrégation
-#filtered_df = df[df["event_type"] == event_type]
+filtered_df = df[df["event_type"] == event_type]
 tweet_counts = filtered_df.groupby("year").size()
+
+# choix de l'année
+years = df["year"].dropna().astype(int)
+min_year, max_year = years.min(), years.max()
+selected_range = st.slider("Choisissez une plage d'années :", min_value=int(min_year), max_value=int(max_year), value=(int(min_year), int(max_year)))
+filtered_df = filtered_df[(filtered_df["year"] >= selected_range[0]) & (filtered_df["year"] <= selected_range[1])]
+
 
 # affichage du graphique
 fig, ax = plt.subplots(figsize=(10, 5))
@@ -53,7 +60,7 @@ tweet_counts.plot(kind="bar", stacked=True, ax=ax)
 
 ax.set_xlabel("Année")
 ax.set_ylabel("Nombre de tweets")
-ax.set_title(f"Évolution des tweets pour : ")
+ax.set_title(f"Évolution des tweets pour : {event_type}")
 
 ax.set_xticks(range(len(tweet_counts)))
 ax.set_xticklabels(tweet_counts.index, rotation=45)
