@@ -34,8 +34,14 @@ def load_data():
 df = load_data()
 
 # liste des types d’événements disponibles
+#event_types = df["event_type"].dropna().unique()
+#event_type = st.selectbox("Choisissez un type d'événement :", sorted(event_types))
+
+# choix multiple
 event_types = df["event_type"].dropna().unique()
-event_type = st.selectbox("Choisissez un type d'événement :", sorted(event_types))
+selected_types = st.multiselect("Sélectionnez un ou plusieurs types d'événements :", sorted(event_types), default=["earthquake"])
+filtered_df = df[df["event_type"].isin(selected_types)]
+
 
 # filtrage et agrégation
 filtered_df = df[df["event_type"] == event_type]
