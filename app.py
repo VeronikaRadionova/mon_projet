@@ -175,3 +175,64 @@ fig.update_layout(
 
 # Affichage du graphique dans Streamlit
 st.plotly_chart(fig, use_container_width=True)
+
+
+
+
+
+
+# Création de la figure avec Plotly
+fig = go.Figure()
+
+# Ajouter une ligne pour chaque type d'événement
+for event_type in pivot_df.columns:
+    fig.add_trace(go.Scatter(
+        x=pivot_df.index,
+        y=pivot_df[event_type],
+        mode='lines+markers',  # 'lines+markers' pour lignes et points
+        name=event_type,
+        hovertemplate="Année : %{x}<br>Nombre de tweets : %{y}<extra></extra>"
+    ))
+
+# Amélioration de l'animation et de la fluidité
+fig.update_traces(
+    line=dict(width=4),  # Lignes plus épaisses pour une meilleure visibilité
+    marker=dict(size=8, symbol="circle", line=dict(width=2, color="DarkSlateGrey")),  # Marqueurs stylisés
+)
+
+# Mise à jour de la mise en page pour un affichage interactif
+fig.update_layout(
+    title="Évolution des tweets par type d'événement",
+    xaxis_title="Année",
+    yaxis_title="Nombre de tweets",
+    xaxis_tickangle=-45,
+    template="plotly_white",  # Thème plus épuré
+    hovermode="x unified",  # Afficher les infos pour toutes les lignes de la même année
+    legend_title="Type d'événement",
+    legend=dict(x=1.05, y=1),  # Déplace la légende en dehors du graphique
+    margin=dict(r=50, t=50, b=50, l=50),  # Ajoute de l'espace pour la légende
+    showlegend=True,
+    # Ajouter des animations
+    updatemenus=[dict(
+        type="buttons", 
+        x=0.1, 
+        y=-0.15,
+        showactive=False,
+        buttons=[dict(
+            label="Rejouer",
+            method="animate",
+            args=[None, dict(frame=dict(duration=1000, redraw=True), fromcurrent=True, mode="immediate")]
+        )]
+    )],
+    sliders=[dict(
+        currentvalue=dict(prefix="Année : ", font=dict(size=20, color="black")),
+        pad=dict(t=50),
+        steps=[dict(
+            args=[["year"], dict(mode="linear", frame=dict(duration=200, redraw=True), fromcurrent=True)],
+            label=str(year),
+            method="animate"
+        ) for year in pivot_df.index],
+    )]
+)
+
+# Affichage du graphique dans Streamlit
