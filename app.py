@@ -47,11 +47,6 @@ event_type = st.selectbox("Choisissez un type d'événement :", sorted(event_typ
 filtered_df = df[df["event_type"] == event_type]
 tweet_counts = filtered_df.groupby("year").size()
 
-# choix de l'année
-years = df["year"].dropna().astype(int)
-min_year, max_year = years.min(), years.max()
-selected_range = st.slider("Choisissez une plage d'années :", min_value=int(min_year), max_value=int(max_year), value=(int(min_year), int(max_year)))
-filtered_df = filtered_df[(filtered_df["year"] >= selected_range[0]) & (filtered_df["year"] <= selected_range[1])]
 
 
 # affichage du graphique
