@@ -94,6 +94,10 @@ fig = px.bar(
     template="plotly_white"
 )
 
-fig.update_layout(xaxis_tickangle=-45)
+#fig.update_layout(xaxis_tickangle=-45)
+
+fig.update_traces(marker_color='skyblue', hovertemplate='%{y} tweets en %{x}')
+fig.update_layout(dragmode='pan', hovermode='x unified')
+
 
 st.plotly_chart(fig, use_container_width=True)
