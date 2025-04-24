@@ -68,9 +68,6 @@ plt.tight_layout()
 st.pyplot(fig)
 
 
-if tweet_counts.empty or tweet_counts["year"].isnull().all():
-    st.warning("Aucune année valide détectée.")
-
 #plotly
 fig = px.bar(
     tweet_counts,
