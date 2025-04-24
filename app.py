@@ -70,7 +70,7 @@ st.pyplot(fig)
 
 #plotly
 fig = px.bar(
-    tweet_counts,
+    filtered_df,
     x="year",
     y="tweet_count",
     color="event_type",
