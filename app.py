@@ -180,6 +180,12 @@ st.plotly_chart(fig, use_container_width=True)
 
 
 
+# Calcul du nombre de tweets par type d'événement et par année
+tweet_counts = df.groupby(["event_type", "year"]).size().reset_index(name='tweet_count')
+
+# Création d'un tableau pivot
+pivot_df = tweet_counts.pivot_table(index='year', columns='event_type', values='tweet_count', aggfunc='sum', fill_value=0)
+
 
 # Création de la figure avec Plotly
 fig = go.Figure()
