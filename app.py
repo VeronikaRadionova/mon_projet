@@ -7,7 +7,6 @@ st.title("Évolution des tweets par type d'événement")
 
 # chargement des fichiers CSV
 @st.cache_data
-@px.cache_data
 
 def load_data():
     is_about_df = pd.read_csv("is_about_clean.csv")
